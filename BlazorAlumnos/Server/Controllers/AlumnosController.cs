@@ -9,7 +9,7 @@ namespace BlazorAlumnos.Server.Controllers
     [ApiController, Route("api/alumnos")]
     public class AlumnosController : ControllerBase
     {
-        private readonly ApplicationDbContext context;
+        private readonly ApplicationDbContext context; 
 
         public AlumnosController(ApplicationDbContext context)
         {

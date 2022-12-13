@@ -1,12 +1,13 @@
-﻿using BlazorAlumnos.Server.Model.Entities;
-using BlazorAlumnos.Server.Model;
+﻿using BlazorAlumnos.Server.Model;
+using BlazorAlumnos.Server.Model.Entities;
+using BlazorAlumnos.Shared.DTOs.Materias;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BlazorAlumnos.Shared.DTOs.Materias;
+
 
 namespace BlazorAlumnos.Server.Controllers
 {
-    [ApiController, Route("api/materias")]
+    [ApiController, Route("api/[Controller]")]
     public class MateriasController : ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -14,10 +15,11 @@ namespace BlazorAlumnos.Server.Controllers
         public MateriasController(ApplicationDbContext context)
         {
             this.context = context;
+
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<MateriaDTO>>> GetMateria()
+        public async Task<ActionResult<List<MateriaDTO>>> Get()
         {
             var materias = await context.Materias.ToListAsync();
 
@@ -30,15 +32,16 @@ namespace BlazorAlumnos.Server.Controllers
                 materiaDto.Nombre = materia.Nombre;
 
                 materiasDto.Add(materiaDto);
+
             }
+
             return materiasDto;
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<MateriaDTO>> GetMateria(int id)
+        public async Task<ActionResult<MateriaDTO>> Get(int id)
         {
-            var materia = await context.Materias
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var materia = await context.Materias.FirstOrDefaultAsync(x => x.Id == id);
 
             if (materia == null)
             {
@@ -49,6 +52,7 @@ namespace BlazorAlumnos.Server.Controllers
             materiaDto.Id = materia.Id;
             materiaDto.Nombre = materia.Nombre;
 
+
             return materiaDto;
         }
 
@@ -56,6 +60,7 @@ namespace BlazorAlumnos.Server.Controllers
         public async Task<ActionResult> Add([FromBody] MateriaDTO materiaDto)
         {
             var materia = new Materia();
+            materia.Id = materiaDto.Id;
             materia.Nombre = materiaDto.Nombre;
 
 
@@ -67,15 +72,14 @@ namespace BlazorAlumnos.Server.Controllers
         [HttpPut]
         public async Task<ActionResult> Edit([FromBody] MateriaDTO materiaDto)
         {
-            var materiaDb = await context.Materias
-                .FirstOrDefaultAsync(x => x.Id == materiaDto.Id);
+            var materiaDb = await context.Materias.FirstOrDefaultAsync(x => x.Id == materiaDto.Id);
 
             if (materiaDb == null)
             {
                 return NotFound();
             }
 
-            materiaDb.Nombre = materiaDto.Nombre;
+            materiaDb.Nombre = materiaDb.Nombre;
 
             context.Materias.Update(materiaDb);
             await context.SaveChangesAsync();
@@ -85,8 +89,7 @@ namespace BlazorAlumnos.Server.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var materiaDb = await context.Materias
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var materiaDb = await context.Materias.FirstOrDefaultAsync(x => x.Id == id);
 
             if (materiaDb == null)
             {
